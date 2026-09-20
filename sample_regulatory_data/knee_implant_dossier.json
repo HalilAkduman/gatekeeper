@@ -1,0 +1,58 @@
+{
+  "device_info": {
+    "trade_name": "OsteoFit-Ti Total Diz Protezi Sistemi",
+    "classification": "Class III (Rule 8 - İmplante Edilebilir Ortopedik Cihaz)",
+    "basic_udi_di": "0868123456789OSTEOFITTIKNEE1",
+    "intended_purpose": "Şiddetli osteoartrit veya travma kaynaklı diz eklemi dejenerasyonu yaşayan erişkin hastalarda total diz artroplastisi (eklem değişimi).",
+    "materials": [
+      "Femoral Komponent: Ti-6Al-4V ELI (ISO 5832-3)",
+      "Tibial Tepsi: Ti-6Al-4V ELI + Plazma Sprey Gözenekli Titanyum Yüzey Kaplama",
+      "Tibial İnsert: UHMWPE (ISO 5834-2)"
+    ],
+    "sterilization": "Gama Işınlaması (25 kGy, ISO 11137)"
+  },
+  "audit_scenarios": {
+    "auditor_draft_findings": [
+      {
+        "id": "NC-KNEE-001",
+        "title": "Nihai Yüzey İşlemli İmplant Biyouyumluluk Ekstraksiyon ve Sitotoksisite Eksikliği",
+        "severity": "CRITICAL",
+        "regulatory_ref": "MDR Annex I GSPR 10.1, GSPR 10.4 & ISO 10993-1:2018 / ISO 10993-5",
+        "finding_text": "Teknik dosyada (Bölüm 4 Biyouyumluluk), yalnızca külçe hammaddeye ait tedarikçi sertifikası (ASTM F136) sunulmuştur. Ancak tibial tepsi üzerine uygulanan plazma-sprey gözenekli titanyum kaplama, işleme yağları ve son gama sterilizasyon prosesi sonrası nihai, steril implant üzerinde yapılmış ISO 10993-5 (In Vitro Sitotoksisite) ve ISO 10993-18 (Kimyasal Karakterizasyon / Ekstraksiyon) test raporları bulunmamaktadır.",
+        "expected_qa_verdict": "APPROVED"
+      },
+      {
+        "id": "NC-KNEE-002",
+        "title": "Cerrahi Set Kutu Rengi ve Tepsileme Ergonomisi",
+        "severity": "MINOR",
+        "regulatory_ref": "",
+        "finding_text": "Ameliyathane cerrahi el aletleri tepsisinin rengi koyu gri seçilmiştir, açık mavi olması cerrahın aletleri daha hızlı seçmesini sağlardı.",
+        "expected_qa_verdict": "REJECTED_SUBJECTIVE"
+      },
+      {
+        "id": "NC-KNEE-003",
+        "title": "PMCF Planında Eklem Kayıt Kütüğü (Registry) Karşılaştırma Eksikliği",
+        "severity": "MAJOR",
+        "regulatory_ref": "MDR Annex XIV Bölüm B (PMCF) & MDCG 2020-7",
+        "finding_text": "Sınıf III implante edilebilir diz protezi için hazırlanan PMCF planında, cihazın 5 ve 10 yıllık revizyon oranlarının uluslararası eklem kayıt kütükleri (Australian/UK National Joint Registry) ile nasıl kıyaslanacağına dair metodoloji ve kohort büyüklüğü belirlenmemiştir.",
+        "expected_qa_verdict": "APPROVED"
+      }
+    ],
+    "manufacturer_capa_attempts": {
+      "attempt_1_insufficient": {
+        "finding_id": "NC-KNEE-001",
+        "response_text": "Titanyum medikal literatürde 40 yıldır kullanılan inert ve güvenli bir malzemedir. Hammadde sertifikamız ASTM F136 uyumludur, bu nedenle nihai ürün üzerinde yeniden sitotoksisite testi yapılmasına gerek yoktur.",
+        "submitted_docs": ["Raw_Titanium_Ingot_Cert_ASTM_F136.pdf"],
+        "has_accredited_testing": false,
+        "expected_closure_verdict": "REJECTED_INSUFFICIENT"
+      },
+      "attempt_2_compliant": {
+        "finding_id": "NC-KNEE-001",
+        "response_text": "Plazma sprey kaplamalı ve gama ile steril edilmiş nihai implant partisi üzerinden ISO 17025 akredite laboratuvarda ISO 10993-5 ve ISO 10993-18 ekstraksiyon testleri tamamlanmış, toksikolojik risk değerlendirmesi teknik dosya Ek 4.2'ye işlenmiştir.",
+        "submitted_docs": ["LAB_ISO17025_Cytotoxicity_Report_TR2026.pdf", "Toxicological_Risk_Assessment_ISO10993_17.pdf"],
+        "has_accredited_testing": true,
+        "expected_closure_verdict": "CLOSED_VERIFIED"
+      }
+    }
+  }
+}

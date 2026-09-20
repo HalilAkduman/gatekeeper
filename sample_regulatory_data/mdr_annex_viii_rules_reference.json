@@ -1,0 +1,64 @@
+{
+  "annex": "Annex VIII",
+  "title": "CLASSIFICATION RULES (Sınıflandırma Kuralları)",
+  "regulation": "Regulation (EU) 2017/745 (MDR)",
+  "structure": {
+    "Chapter_I": "DEFINITIONS SPECIFIC TO CLASSIFICATION RULES (Tanımlar)",
+    "Chapter_II": "IMPLEMENTING RULES (Uygulama Prensipleri - 3.1'den 3.7'ye)",
+    "Chapter_III": "CLASSIFICATION RULES (22 Kural)"
+  },
+  "implementing_principles": [
+    {
+      "clause": "3.1",
+      "rule": "Kullanım Amacı İlkesi: Kuralların uygulanması cihazın kullanım amacına tabidir."
+    },
+    {
+      "clause": "3.2",
+      "rule": "Kombinasyon Cihazları: Başka bir cihazla birlikte kullanılacaksa her biri bağımsız sınıflandırılır."
+    },
+    {
+      "clause": "3.3",
+      "rule": "Aksesuarlar: Tıbbi cihaz aksesuarları cihazdan bağımsız olarak kendi başlarına sınıflandırılır."
+    },
+    {
+      "clause": "3.4",
+      "rule": "Yazılım (SaMD): Cihazı süren veya kullanımını etkileyen yazılım cihazla aynı sınıftadır. Bağımsız yazılım kendi başına sınıflandırılır (Kural 11)."
+    },
+    {
+      "clause": "3.5",
+      "rule": "En Katı Kural İlkesi: Birden fazla kural veya alt kural uygulanabiliyorsa, EN YÜKSEK risk sınıfını veren kural geçerlidir."
+    },
+    {
+      "clause": "3.6",
+      "rule": "Kesintisiz Kullanım (Continuous Use): Temizlik/dezenfeksiyon araları süreyi sıfırlamaz; aynı tip cihazla ardışık değişim kümülatif toplanır."
+    },
+    {
+      "clause": "3.7",
+      "rule": "Doğrudan Teşhis: Teşhisi tek başına sağlayan veya teşhis için belirleyici bilgi sunan cihaz doğrudan teşhis cihazı sayılır."
+    }
+  ],
+  "rules_summary": [
+    {"rule": 1, "group": "Non-invasive", "title": "Genel İnvaziv Olmayan Cihazlar", "classes": ["Class I", "Class IIa"]},
+    {"rule": 2, "group": "Non-invasive", "title": "Sıvı ve Gaz İletim / Depolama Cihazları", "classes": ["Class IIa", "Class IIb"]},
+    {"rule": 3, "group": "Non-invasive", "title": "Kan, Doku ve Sıvı Biyolojik/Kimyasal Değiştirme Cihazları", "classes": ["Class IIa", "Class IIb", "Class III"]},
+    {"rule": 4, "group": "Non-invasive", "title": "Yaralı Cilt ve Mukoza ile Temas Edenler (Yara Örtüleri)", "classes": ["Class I", "Class IIa", "Class IIb"]},
+    {"rule": 5, "group": "Invasive (Orifice)", "title": "Vücut Açıklıklarından Giren İnvaziv Cihazlar", "classes": ["Class I", "Class IIa", "Class IIb"]},
+    {"rule": 6, "group": "Surgically Invasive (Transient)", "title": "Geçici Cerrahi İnvaziv Cihazlar (<60 dk)", "classes": ["Class I (Re-usable)", "Class IIa", "Class III"]},
+    {"rule": 7, "group": "Surgically Invasive (Short-term)", "title": "Kısa Süreli Cerrahi İnvaziv Cihazlar (60 dk - 30 gün)", "classes": ["Class IIa", "Class IIb", "Class III"]},
+    {"rule": 8, "group": "Surgically Invasive (Long-term & Implants)", "title": "İmplante Edilebilir ve Uzun Süreli Cihazlar (>30 gün)", "classes": ["Class IIa (Diş)", "Class IIb (Genel)", "Class III (Eklem, Kalp, MSS, Omurga, İlaç)"]},
+    {"rule": 9, "group": "Active (Therapeutic)", "title": "Enerji Veren/Değiştiren Aktif Tedavi Cihazları", "classes": ["Class IIa", "Class IIb"]},
+    {"rule": 10, "group": "Active (Diagnosis/Monitoring)", "title": "Teşhis ve İzleme Amaçlı Aktif Cihazlar", "classes": ["Class I", "Class IIa", "Class IIb"]},
+    {"rule": 11, "group": "Active (Software / SaMD)", "title": "Tıbbi Cihaz Yazılımları", "classes": ["Class I", "Class IIa", "Class IIb", "Class III"]},
+    {"rule": 12, "group": "Active (Administering/Removing)", "title": "Madde/İlaç Veren/Uzaklaştıran Aktif Cihazlar (Pompalar)", "classes": ["Class IIa", "Class IIb"]},
+    {"rule": 13, "group": "Active (Other)", "title": "Diğer Tüm Aktif Cihazlar", "classes": ["Class I"]},
+    {"rule": 14, "group": "Special", "title": "Tıbbi Ürün (İlaç) İçeren Tıbbi Cihazlar", "classes": ["Class III"]},
+    {"rule": 15, "group": "Special", "title": "Doğum Kontrolü ve CYBH Koruma Cihazları", "classes": ["Class IIb", "Class III (İmplant)"]},
+    {"rule": 16, "group": "Special", "title": "Dezenfeksiyon ve Sterilizasyon Cihazları", "classes": ["Class IIa", "Class IIb"]},
+    {"rule": 17, "group": "Special", "title": "X-Işını Teşhis Görüntüsü Kaydedenler", "classes": ["Class IIa"]},
+    {"rule": 18, "group": "Special", "title": "İnsan/Hayvan Dokusu veya Hücresi İçeren Cihazlar", "classes": ["Class III"]},
+    {"rule": 19, "group": "Special", "title": "Nanomalzeme İçeren Cihazlar", "classes": ["Class IIa", "Class IIb", "Class III"]},
+    {"rule": 20, "group": "Special", "title": "Soluma Yoluyla İlaç Veren İnvaziv Cihazlar (İnhalatörler)", "classes": ["Class IIa", "Class IIb"]},
+    {"rule": 21, "group": "Special", "title": "Vücut Tarafından Emilen veya Dağılan Maddelerden Oluşan Cihazlar", "classes": ["Class IIa", "Class IIb", "Class III"]},
+    {"rule": 22, "group": "Special", "title": "Kapalı Döngü (Closed-Loop) ve Entegre Terapötik Aktif Cihazlar", "classes": ["Class III"]}
+  ]
+}

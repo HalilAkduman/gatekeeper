@@ -1,0 +1,59 @@
+{
+  "guidance": "MDCG 2019-14",
+  "title": "Explanatory note on MDR codes",
+  "legal_basis": "Commission Implementing Regulation (EU) 2017/2185 & Regulation (EU) 2017/745 Annex VII",
+  "status": "Official MDCG Guidance Document",
+  "purpose": "Onaylanmış Kuruluşların atama kapsamını (scope of designation) tanımlamak, üretici başvurularındaki cihazları doğru kodlamak ve NB Proje Liderlerinin denetim heyetlerini (PR/SA/KU/DM/FR) mevzuata uygun yetkinlikte atamasını güvence altına almak.",
+  "code_categories": {
+    "MDA_MDN": {
+      "name": "Design and Intended Purpose Codes (Primary Codes)",
+      "allocation_rule": "EXACTLY_ONE (Her tıbbi cihaza TAM OLARAK 1 ADET MDA veya MDN atanmalıdır)",
+      "types": {
+        "MDA": "Active medical devices (Aktif tıbbi cihazlar - MDA 0100 - MDA 0300)",
+        "MDN": "Non-active medical devices (Aktif olmayan cihazlar - MDN 1100 İmplantlar, MDN 1200 Non-implant, MDN 1300 Yara bakım vb.)"
+      },
+      "tie_breaker_rule": "Birden fazla kod uygulanabilir görünüyorsa, listede daha üstte yer alan ve daha spesifik teknolojik/tıbbi uzmanlık gerektiren kod seçilir.",
+      "usage": "Notified Body kapsam teyidi ve Teknik Dosya İncelemecisi (PR - Product Reviewer) ataması"
+    },
+    "MDS": {
+      "name": "Specific Characteristics Codes (Horizontal)",
+      "allocation_rule": "ZERO_TO_MANY (0, 1 veya birden fazla atanabilir)",
+      "examples": [
+        "MDS 1001: Tıbbi ürün (ilaç) içeren cihazlar",
+        "MDS 1002: İnsan kanı/plazması veya dokusu içeren cihazlar",
+        "MDS 1004: Nanomalzeme içeren cihazlar",
+        "MDS 1005: Steril durumdaki tıbbi cihazlar",
+        "MDS 1008: Tıbbi cihaz yazılımları (SaMD)"
+      ],
+      "usage": "Özel uzmanlık incelemecileri (Sterilizasyon, Biyouyumluluk, Toksikoloji) ataması"
+    },
+    "MDT": {
+      "name": "Manufacturing Technologies and Processes Codes (Horizontal)",
+      "allocation_rule": "AT_LEAST_ONE (Her cihaza EN AZ 1 ADET MDT atanmalıdır)",
+      "examples": [
+        "MDT 2001: Metal işleme teknolojileri",
+        "MDT 2002: Plastik işleme teknolojileri",
+        "MDT 2007: Yüzey kaplama ve kaplama teknolojileri",
+        "MDT 2008: Işınlama sterilizasyonu (Gama / E-beam)",
+        "MDT 2009: Gaz sterilizasyonu (Etilen Oksit)",
+        "MDT 2011: Temiz oda ve kontrollü ortamlar"
+      ],
+      "usage": "Saha Denetçisi (SA - Site Auditor) ve kritik tedarikçi denetçisi ataması"
+    }
+  },
+  "titanium_knee_implant_allocation": {
+    "primary_mdn": "MDN 1102 (Non-active osteo- and orthopaedic implants) [Rule: Exactly 1]",
+    "specific_mds": ["MDS 1005 (Devices in sterile condition) [Rule: 0 or more]"],
+    "technologies_mdt": [
+      "MDT 2001 (Metal processing)",
+      "MDT 2008 (Radiation sterilisation)",
+      "MDT 2011 (Cleanrooms)"
+    ],
+    "assigned_team_roles": {
+      "PR_Product_Reviewer": "MDN 1102 + MDS 1005 yetkili (Teknik Dosya İncelemeci)",
+      "SA_Site_Auditor": "MDT 2001 + MDT 2008 + MDT 2011 yetkili (Saha Baş Denetçisi)",
+      "KU_Clinical_Expert": "MDN 1102 Ortopedi Cerrahı (Klinik Değerlendirme Uzmanı)",
+      "FR_DM_Committee": "MDR Annex VII 4.10 gereği tamamen bağımsız karar verici heyet"
+    }
+  }
+}

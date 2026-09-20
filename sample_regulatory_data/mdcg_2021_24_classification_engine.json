@@ -1,0 +1,77 @@
+{
+  "guidance": "MDCG 2021-24 Rev.1",
+  "title": "Guidance on classification of medical devices - Regulation (EU) 2017/745 Annex VIII",
+  "legal_basis": "Regulation (EU) 2017/745 (MDR) Annex VIII & Commission Implementing Regulation (EU) 2017/2185",
+  "status": "Official EU Guidance (Non-binding consensus interpretation adopted by MDCG)",
+  "core_principles": [
+    {
+      "principle": "Intended Purpose (Kullanım Amacı)",
+      "description": "Cihazın sınıflandırılması üreticinin IFU, etiket ve teknik dokümantasyonda beyan ettiği kullanım amacına göre belirlenir."
+    },
+    {
+      "principle": "Strictest Rule Principle (En Katı Kural İlkesi - MDR Annex VIII Bölüm II 3.5)",
+      "description": "Cihaza birden fazla kural uygulanabilir durumdaysa, en yüksek risk sınıfına yol açan kural geçerlidir."
+    },
+    {
+      "principle": "Continuous Use (Kesintisiz Kullanım)",
+      "description": "Cihazın aynı amaçla kesintisiz kullanımı veya aynı türden cihazlarla ardışık değiştirilmesi durumunda süre kümülatif olarak toplanır."
+    },
+    {
+      "principle": "Duration Categories (Süre Kategorileri)",
+      "categories": {
+        "transient": "< 60 dakika",
+        "short_term": "60 dakika - 30 gün",
+        "long_term": "> 30 gün (İmplantlar bu gruptadır)"
+      }
+    }
+  ],
+  "classification_chapters": {
+    "Chapter_I_Non_Invasive": {
+      "rules": ["Rule 1", "Rule 2", "Rule 3", "Rule 4"],
+      "scope": "Vücut içine cerrahi veya orifis yoluyla girmeyen invaziv olmayan cihazlar"
+    },
+    "Chapter_II_Invasive": {
+      "rules": ["Rule 5", "Rule 6", "Rule 7", "Rule 8"],
+      "scope": "Vücut açıklıklarından giren veya cerrahi invaziv/implante edilen cihazlar",
+      "rule_8_details": {
+        "title": "İmplante Edilebilir ve Uzun Süreli (>30 gün) Cerrahi İnvaziv Cihazlar",
+        "default_class": "Class IIb",
+        "up_classifications_to_class_iii": [
+          "Doğrudan kalp, merkezi dolaşım veya merkezi sinir sistemi ile temas edenler",
+          "Biyolojik etkiye sahip olan veya tamamen/büyük ölçüde emilenler (bioresorbable)",
+          "İlaç / tıbbi ürün uygulamak amacıyla implante edilenler",
+          "Total ve kısmi eklem replasmanları (Joint Replacements - Kalça, Diz, Omuz protezleri)",
+          "Omurga disk replasman implantları veya omurga ile temas eden implantlar"
+        ],
+        "exceptions_ancillary": "Vida, plaka, kama gibi sabitleyici/ikincil parçalar protezin kendisiyle birlikte olsa dahi genel kural uyarınca Class IIb değerlendirilir."
+      }
+    },
+    "Chapter_III_Active": {
+      "rules": ["Rule 9", "Rule 10", "Rule 11", "Rule 12", "Rule 13"],
+      "scope": "Elektrik veya enerji kaynağıyla çalışan cihazlar ve yazılımlar (SaMD - Rule 11)"
+    },
+    "Chapter_IV_Special": {
+      "rules": ["Rule 14", "Rule 15", "Rule 16", "Rule 17", "Rule 18", "Rule 19", "Rule 20", "Rule 21", "Rule 22"],
+      "scope": "İlaç içerenler (R14), Doku/Hücre içerenler (R18), Nanomalzemeler (R19), Yutulan/Emilen maddeler (R21), Kapalı döngü aktif sistemler (R22)"
+    }
+  },
+  "titanium_knee_implant_worked_example": {
+    "device": "OsteoFit-Ti Total Diz Protezi Sistemi",
+    "intended_purpose": "Erişkin hastalarda ileri evre diz osteoartriti tedavisinde total eklem değişimi.",
+    "duration_of_use": "Long-term (>30 gün / Daimi implant)",
+    "invasiveness": "Surgically invasive implantable device",
+    "applicable_rules": [
+      {
+        "rule": "Rule 8",
+        "clause": "Indent 5: Total and partial joint replacements",
+        "result_class": "Class III",
+        "justification": "MDCG 2021-24 Rule 8 worked example uyarınca diz artroplastisi femoral ve tibial eklem komponentleri istisna bendi gereği doğrudan Sınıf III'tür."
+      }
+    ],
+    "applicable_codes_eu_2017_2185": {
+      "main_mdn": "MDN 1102 (Non-active osteo- and orthopaedic implants)",
+      "special_mds": "MDS 1005 (Devices in sterile condition)",
+      "technologies_mdt": ["MDT 2001 (Metal processing)", "MDT 2008 (Sterilisation - Radiation)", "MDT 2011 (Cleanrooms)"]
+    }
+  }
+}

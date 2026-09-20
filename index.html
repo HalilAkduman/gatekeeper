@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MDR Gatekeeper & Committee Co-Pilot (İnteraktif Prototip)</title>
+<style>
+:root {
+  --bg-main: #090e1a;
+  --bg-card: #121a2d;
+  --bg-input: #1a253e;
+  --border: #233252;
+  --border-focus: #38bdf8;
+  --text-main: #f1f5f9;
+  --text-muted: #94a3b8;
+  --primary: #0284c7;
+  --cyan: #06b6d4;
+  --emerald: #10b981;
+  --amber: #f59e0b;
+  --rose: #f43f5e;
+  --purple: #a855f7;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+body { background: var(--bg-main); color: var(--text-main); min-height: 100vh; padding: 1.5rem; line-height: 1.5; }
+
+header {
+  max-width: 1200px;
+  margin: 0 auto 2rem;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 1.25rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+.brand h1 { font-size: 1.6rem; font-weight: 800; color: #fff; display: flex; align-items: center; gap: 0.6rem; }
+.badge-role {
+  background: rgba(6, 182, 212, 0.15);
+  color: var(--cyan);
+  border: 1px solid rgba(6, 182, 212, 0.4);
+  padding: 0.2rem 0.6rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.process-stepper {
+  display: flex;
+  max-width: 1200px;
+  margin: 0 auto 2rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+.step-item {
+  flex: 1;
+  padding: 1rem 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  cursor: pointer;
+  border-right: 1px solid var(--border);
+  background: transparent;
+  transition: all 0.2s;
+  color: var(--text-muted);
+}
+.step-item:last-child { border-right: none; }
+.step-item.active {
+  background: rgba(2, 132, 199, 0.15);
+  color: #fff;
+  border-bottom: 3px solid var(--cyan);
+}
+.step-num {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--bg-input);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+.step-item.active .step-num { background: var(--cyan); color: #000; }
+
+main { max-width: 1200px; margin: 0 auto; }
+.tab-pane { display: none; }
+.tab-pane.active { display: block; }
+
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border);
+}
+.card-title { font-size: 1.2rem; font-weight: 700; color: #fff; }
+
+.btn {
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  padding: 0.7rem 1.4rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.2s;
+}
+.btn:hover { background: #0369a1; }
+.btn-emerald { background: var(--emerald); }
+.btn-emerald:hover { background: #059669; }
+
+.finding-row {
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  transition: all 0.2s;
+}
+.finding-top { display: flex; justify-content: space-between; margin-bottom: 0.5rem; }
+.finding-title { font-weight: 700; font-size: 1rem; color: #fff; }
+.status-pill {
+  padding: 0.2rem 0.6rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.status-pending { background: rgba(245, 158, 11, 0.2); color: var(--amber); }
+.status-approved { background: rgba(16, 185, 129, 0.2); color: var(--emerald); }
+.status-rejected { background: rgba(244, 63, 94, 0.2); color: var(--rose); }
+
+.analysis-box {
+  margin-top: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  font-size: 0.88rem;
+  display: none;
+}
+.analysis-box.show { display: block; }
+.analysis-approved { background: rgba(16, 185, 129, 0.1); border-left: 3px solid var(--emerald); }
+.analysis-rejected { background: rgba(244, 63, 94, 0.1); border-left: 3px solid var(--rose); }
+
+/* Scorecard */
+.scorecard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+.score-stat {
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem;
+  text-align: center;
+}
+.score-num { font-size: 1.8rem; font-weight: 800; color: var(--cyan); }
+.score-label { font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; }
+
+.verdict-banner {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(6, 182, 212, 0.1) 100%);
+  border: 1px solid var(--emerald);
+  border-radius: 12px;
+  padding: 1.5rem;
+  text-align: center;
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <h1>🛡️ MDR Gatekeeper & Committee Co-Pilot</h1>
+    <span style="color:var(--text-muted); font-size:0.9rem;">Onaylanmış Kuruluş (Notified Body) İç Kalite ve Karar Destek Platformu</span>
+  </div>
+  <span class="badge-role">MDR (EU 2017/745) Annex VII 4.8 & 4.10 Standardı</span>
+</header>
+
+<div class="process-stepper">
+  <div class="step-item active" id="step1-btn" onclick="openStep(1)">
+    <div class="step-num">1</div>
+    <div>
+      <div style="font-weight:700;">Aşama 1: Ön-Gönderim QA</div>
+      <div style="font-size:0.75rem;">Denetçi Raporunun MDR Uygunluk Denetimi</div>
+    </div>
+  </div>
+  <div class="step-item" id="step2-btn" onclick="openStep(2)">
+    <div class="step-num">2</div>
+    <div>
+      <div style="font-weight:700;">Aşama 2: DÖF (CAPA) Takibi</div>
+      <div style="font-size:0.75rem;">Firma Çözüm ve Kanıt Kapatma Kontrolü</div>
+    </div>
+  </div>
+  <div class="step-item" id="step3-btn" onclick="openStep(3)">
+    <div class="step-num">3</div>
+    <div>
+      <div style="font-weight:700;">Aşama 3: Komite Co-Pilot</div>
+      <div style="font-size:0.75rem;">Nihai Sertifikasyon Komitesi Bağımsız Kararı</div>
+    </div>
+  </div>
+  <div class="step-item" id="step4-btn" onclick="openStep(4)">
+    <div class="step-num">4</div>
+    <div>
+      <div style="font-weight:700;">Aşama 4: Proje Lideri & Teklif</div>
+      <div style="font-size:0.75rem;">Kodlama, Yetkin Denetçi Atama & Süre Hesabı</div>
+    </div>
+  </div>
+</div>
+
+<main>
+  <!-- TAB 1: PRE-DISPATCH AUDITOR REPORT QA -->
+  <section id="pane-1" class="tab-pane active">
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Denetçi Taslak Raporu İnceleme Masası</div>
+          <p style="color:var(--text-muted); font-size:0.85rem; margin-top:0.25rem;">
+            Denetçi teknik dosyayı inceledi ve aşağıdaki 3 uygunsuzluk taslağını girdi. <strong>Bu rapor firmaya gönderilmeden önce sistem tarafından MDR maddeleri, delil yeterliliği ve sübjektiflik açısından taranacaktır.</strong>
+          </p>
+        </div>
+        <button class="btn" id="btnRunQA" onclick="runPreDispatchQA()">⚡ Denetçi Raporunu MDR'a Göre Denetle</button>
+      </div>
+
+      <div style="background:rgba(6, 182, 212, 0.08); border:1px solid rgba(6, 182, 212, 0.25); padding:0.85rem 1rem; border-radius:8px; margin-bottom:1rem; font-size:0.88rem; color:var(--text-main);">
+        <strong>Aktif İncelenen Cihaz:</strong> OsteoFit-Ti Total Diz Protezi (Sınıf III İmplante Cihaz) | 
+        <strong>Malzemeler:</strong> Ti-6Al-4V ELI + Plazma Gözenekli Yüzey Kaplama | 
+        <strong>Baş Denetçi:</strong> Dr. Selin B. (Ortopedi & Biyomateryal Uzmanı)
+      </div>
+
+      <!-- Finding 1 -->
+      <div class="finding-row" id="finding1">
+        <div class="finding-top">
+          <span class="finding-title">Bulgu 1: Nihai Yüzey İşlemli İmplant Biyouyumluluk ve Sitotoksisite Eksikliği</span>
+          <span class="status-pill status-pending" id="status1">Beklemede</span>
+        </div>
+        <p style="font-size:0.9rem; color:var(--text-muted);">
+          <em>Denetçi Notu:</em> "Yalnızca külçe hammaddeye ait ASTM F136 sertifikası sunulmuştur. Ancak tibial tepsi üzerine uygulanan plazma-sprey gözenekli titanyum kaplama, işleme yağları ve son gama sterilizasyonu sonrası nihai implant üzerinde ISO 10993-5 (Sitotoksisite) ve ISO 10993-18 (Ekstraksiyon) testleri bulunmamaktadır."
+        </p>
+        <div class="analysis-box" id="analysis1">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- Finding 2 -->
+      <div class="finding-row" id="finding2">
+        <div class="finding-top">
+          <span class="finding-title">Bulgu 2: Cerrahi Set Kutu Rengi ve Tepsileme Ergonomisi</span>
+          <span class="status-pill status-pending" id="status2">Beklemede</span>
+        </div>
+        <p style="font-size:0.9rem; color:var(--text-muted);">
+          <em>Denetçi Notu:</em> "Ameliyathane el aletleri tepsisinin rengi koyu gri seçilmiştir, açık mavi olması cerrahın aletleri daha hızlı ayırt etmesini sağlardı."
+        </p>
+        <div class="analysis-box" id="analysis2">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- Finding 3 -->
+      <div class="finding-row" id="finding3">
+        <div class="finding-top">
+          <span class="finding-title">Bulgu 3: PMCF Planında Eklem Kayıt Kütüğü (Registry) Karşılaştırma Eksikliği</span>
+          <span class="status-pill status-pending" id="status3">Beklemede</span>
+        </div>
+        <p style="font-size:0.9rem; color:var(--text-muted);">
+          <em>Denetçi Notu:</em> "Sınıf III diz protezinin PMCF planında, 5 ve 10 yıllık revizyon cerrahisi oranlarının uluslararası eklem kayıt kütükleri (Australian/UK Joint Registry) ile kıyaslanmasına dair metodoloji ve kohort büyüklüğü belirlenmemiştir."
+        </p>
+        <div class="analysis-box" id="analysis3">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <div id="dispatchBox" style="display:none; text-align:right; margin-top:1.5rem;">
+        <span style="color:var(--emerald); font-weight:600; margin-right:1rem; font-size:0.9rem;">✓ Rapor regülatif süzgeçten geçirildi ve kurşun geçirmez hale getirildi.</span>
+        <button class="btn btn-emerald" onclick="openStep(2)">📩 Onaylı Raporu Firmaya Gönder & DÖF Sürecini Başlat ➔</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- TAB 2: CAPA / DÖF LIFECYCLE -->
+  <section id="pane-2" class="tab-pane">
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">DÖF (CAPA) Çözümleme ve Kanıt Kapatma Doğrulaması</div>
+          <p style="color:var(--text-muted); font-size:0.85rem; margin-top:0.25rem;">
+            Firma geçerli 2 uygunsuzluk için DÖF yanıtını ve revize dokümantasyonunu sundu. <strong>Sistem, kanıtların uygunsuzluğu gerçekten kapatıp kapatmadığını denetler.</strong>
+          </p>
+        </div>
+        <button class="btn" onclick="verifyCAPA()">🔍 DÖF Kapatma Analizini Çalıştır</button>
+      </div>
+
+      <!-- CAPA 1 -->
+      <div class="finding-row">
+        <div class="finding-top">
+          <span class="finding-title">Bulgu 1 Kapatma Dosyası: Biyouyumluluk Ekstraksiyon Raporu</span>
+          <span class="status-pill status-pending" id="capaStatus1">İnceleniyor</span>
+        </div>
+        <div style="font-size:0.85rem; color:#cbd5e1; background:rgba(0,0,0,0.2); padding:0.6rem; border-radius:4px; margin:0.4rem 0;">
+          <strong>Firmanın Sunduğu Kanıt:</strong> Akredite laboratuvardan alınan ISO 10993-12 Ekstraksiyon Test Raporu (No: LAB-2026-BIO-8871) ve toksikolojik değerlendirme özeti teknik dosya Bölüm 4.2'ye eklendi.
+        </div>
+        <div class="analysis-box" id="capaAnalysis1">
+          <!-- JS -->
+        </div>
+      </div>
+
+      <!-- CAPA 2 -->
+      <div class="finding-row">
+        <div class="finding-top">
+          <span class="finding-title">Bulgu 3 Kapatma Dosyası: PMCF Uluslararası Eklem Kayıt Kütüğü Protokolü</span>
+          <span class="status-pill status-pending" id="capaStatus2">İnceleniyor</span>
+        </div>
+        <div style="font-size:0.85rem; color:#cbd5e1; background:rgba(0,0,0,0.2); padding:0.6rem; border-radius:4px; margin:0.4rem 0;">
+          <strong>Firmanın Sunduğu Kanıt:</strong> Australian Orthopaedic Association National Joint Replacement Registry (AOANJRR) ve UK NJR kıyaslama metodolojisini ve 500 hastalık 10 yıllık prospektif takip protokolünü (Rev 3) teknik dosyaya ekledi.
+        </div>
+        <div class="analysis-box" id="capaAnalysis2">
+          <!-- JS -->
+        </div>
+      </div>
+
+      <div id="committeeDispatchBox" style="display:none; text-align:right; margin-top:1.5rem;">
+        <span style="color:var(--emerald); font-weight:600; margin-right:1rem; font-size:0.9rem;">✓ Tüm majör DÖF'ler tam kanıtla kapatıldı.</span>
+        <button class="btn btn-emerald" onclick="openStep(3)">🏛️ Dosyayı Sertifikasyon Komitesine Sevk Et ➔</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- TAB 3: CERTIFICATION COMMITTEE CO-PILOT -->
+  <section id="pane-3" class="tab-pane">
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Sertifikasyon Komitesi Bağımsız Karar Kokpiti (Annex VII 4.10)</div>
+          <p style="color:var(--text-muted); font-size:0.85rem; margin-top:0.25rem;">
+            Komite üyeleri denetim ekibinden bağımsızdır. <strong>Sistem, 5000 sayfalık dosyanın tamamını bağımsız bir ikinci göz olarak tarar ve Komiteye güven karnesi sunar.</strong>
+          </p>
+        </div>
+        <span class="badge-role" style="background:rgba(16,185,129,0.15); color:var(--emerald); border-color:var(--emerald);">Komiteye Hazır</span>
+      </div>
+
+      <div class="scorecard-grid">
+        <div class="score-stat">
+          <div class="score-num">23 / 23</div>
+          <div class="score-label">GSPR Tam Uyumluluk</div>
+        </div>
+        <div class="score-stat">
+          <div class="score-num" style="color:var(--emerald);">%100</div>
+          <div class="score-label">DÖF Kapatma Oranı</div>
+        </div>
+        <div class="score-stat">
+          <div class="score-num" style="color:var(--purple);">0</div>
+          <div class="score-label">Açık Yasal Risk</div>
+        </div>
+        <div class="score-stat">
+          <div class="score-num" style="color:var(--cyan);">Pozitif</div>
+          <div class="score-label">Klinik Fayda / Risk</div>
+        </div>
+      </div>
+
+      <div class="verdict-banner">
+        <h3 style="color:#fff; font-size:1.4rem; margin-bottom:0.5rem;">Sistem Nihai Değerlendirmesi: CE SERTİFİKASI VERİLMESİ UYGUNDUR</h3>
+        <p style="color:var(--text-muted); max-width:800px; margin:0 auto 1.5rem; font-size:0.95rem;">
+          MDR Annex VII Madde 4.10 uyarınca yapılan bağımsız ikinci incelemede; cihazın klinik değerlendirmesi (Annex XIV), biyouyumluluk testleri (ISO 10993) ve risk kontrolleri (ISO 14971) tam uyumlu bulunmuş, açılan tüm DÖF'ler kanıtlanarak kapatılmıştır.
+        </p>
+        <button class="btn btn-emerald" onclick="signDecision()">✍️ Komite Başkanı Olarak Nihai Kararı Onayla ve Sertifikayı İmzala</button>
+      </div>
+
+      <div id="signResult" style="display:none; margin-top:1.5rem; text-align:center; color:var(--cyan); font-weight:700;">
+        ✓ CE 0123 Sertifika Onay Kütüğüne Kriptografik Olarak Kaydedildi. Karar Tutanağı Arşivlendi.
+      </div>
+    </div>
+  </section>
+  <!-- TAB 4: PROJECT LEADER COCKPIT (CODING, ALLOCATION & QUOTATION) -->
+  <section id="pane-4" class="tab-pane">
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Proje Lideri Masası: Başvuru İnceleme, Kodlama & Teklif Planlama</div>
+          <p style="color:var(--text-muted); font-size:0.85rem; margin-top:0.25rem;">
+            Teknik dosya girdiğinde MDA/MDN/MDS/MDT kodları çıkarılır; Excel yetkinlik matrisine göre yetkili PR/SA/KU/DM/FR heyeti atanır ve resmi teklif formuna göre denetim süreleri hesaplanır.
+          </p>
+        </div>
+        <a href="denetci_yetkinlik_matrisi_ve_teklif.xlsx" class="btn" download style="background:#1e293b; border:1px solid #38bdf8;">
+          📥 Excel Yetkinlik Matrisi & Teklif Formunu İndir (.xlsx)
+        </a>
+      </div>
+
+      <!-- Card 1: Dossier Ingestion & Automatic Coding -->
+      <div style="background:var(--bg-input); border:1px solid var(--border); border-radius:8px; padding:1.2rem; margin-bottom:1.5rem;">
+        <div style="font-weight:700; color:#fff; margin-bottom:0.75rem; font-size:1.05rem;">
+          1. Başvuru Dosyası ve Otomatik Kapsam Belirleme (Regulation EU 2017/2185)
+        </div>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1rem; margin-bottom:1rem;">
+          <div>
+            <label style="font-size:0.8rem; color:var(--text-muted); font-weight:600;">Üretici Firma:</label>
+            <input type="text" id="mfrName" value="BioTech Medikal A.Ş." style="width:100%; background:var(--bg-card); border:1px solid var(--border); color:#fff; padding:0.5rem; border-radius:6px; margin-top:0.25rem;">
+          </div>
+          <div>
+            <label style="font-size:0.8rem; color:var(--text-muted); font-weight:600;">Tıbbi Cihaz Ticari Adı:</label>
+            <input type="text" id="devName" value="OsteoFit-Ti Total Diz Protezi Sistemi" style="width:100%; background:var(--bg-card); border:1px solid var(--border); color:#fff; padding:0.5rem; border-radius:6px; margin-top:0.25rem;">
+          </div>
+        </div>
+
+        <button class="btn" onclick="extractCodesAndClass()" style="width:100%; justify-content:center;">
+          🤖 Dosyayı Tara: Sınıf ve MDA/MDN/MDS/MDT Kodlarını Otomatik Çıkar
+        </button>
+
+        <div id="codingResultBox" style="display:none; margin-top:1rem; background:rgba(0,0,0,0.3); padding:1rem; border-radius:8px; border:1px solid var(--border-focus);">
+          <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:1rem; margin-bottom:1rem;">
+            <div>
+              <div style="font-size:0.75rem; color:var(--cyan); font-weight:700;">MDR RİSK SINIFI & KURALI</div>
+              <div style="font-weight:700; color:#fff; font-size:0.95rem; margin-top:0.2rem;">Sınıf III (Kural 8)</div>
+              <div style="font-size:0.75rem; color:var(--text-muted);">Cerrahi İnvaziv ve İmplante Ortopedik</div>
+            </div>
+            <div>
+              <div style="font-size:0.75rem; color:var(--cyan); font-weight:700;">ANA ÜRÜN KODU (MDN)</div>
+              <div style="font-weight:700; color:#fff; font-size:0.95rem; margin-top:0.2rem;">MDN 1102</div>
+              <div style="font-size:0.75rem; color:var(--text-muted);">Non-active osteo- and orthopaedic implants</div>
+            </div>
+            <div>
+              <div style="font-size:0.75rem; color:var(--cyan); font-weight:700;">ÖZEL NİTELİK KODU (MDS)</div>
+              <div style="font-weight:700; color:#fff; font-size:0.95rem; margin-top:0.2rem;">MDS 1005</div>
+              <div style="font-size:0.75rem; color:var(--text-muted);">Steril Durumdaki Cihazlar</div>
+            </div>
+            <div>
+              <div style="font-size:0.75rem; color:var(--cyan); font-weight:700;">TEKNOLOJİ KODLARI (MDT)</div>
+              <div style="font-weight:700; color:#fff; font-size:0.95rem; margin-top:0.2rem;">MDT 2001, 2008, 2011</div>
+              <div style="font-size:0.75rem; color:var(--text-muted);">Metal İşleme, Gama, Temiz Oda</div>
+            </div>
+          </div>
+
+          <!-- MDCG 2021-24 Karar Ağacı Doğrulama İzi -->
+          <div style="background:rgba(56,189,248,0.06); border:1px dashed var(--cyan); border-radius:6px; padding:0.85rem; font-size:0.83rem; margin-bottom:0.75rem;">
+            <div style="display:flex; align-items:center; gap:0.5rem; font-weight:700; color:var(--cyan); margin-bottom:0.4rem;">
+              <span>⚖️ MDCG 2021-24 Rev.1 Sınıflandırma Karar Ağacı İzi (Annex VIII Kural 8 Doğrulaması):</span>
+            </div>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:0.6rem; color:var(--text-main);">
+              <div style="background:rgba(0,0,0,0.2); padding:0.5rem; border-radius:4px;">
+                <span style="color:var(--emerald); font-weight:600;">1. İnvazivlik & Süre:</span> Cerrahi İnvaziv + Daimi İmplant (>30 gün) ➔ <em>Kural 8 Genel Bend (Varsayılan: Sınıf IIb)</em>
+              </div>
+              <div style="background:rgba(0,0,0,0.2); padding:0.5rem; border-radius:4px;">
+                <span style="color:var(--emerald); font-weight:600;">2. İstisna Kontrolü (Indent 5):</span> "Total ve kısmi eklem replasmanı" (Total Knee Replacement) ➔ <strong>SINIF III'E YÜKSELTİLDİ</strong>
+              </div>
+              <div style="background:rgba(0,0,0,0.2); padding:0.5rem; border-radius:4px;">
+                <span style="color:var(--emerald); font-weight:600;">3. Aksesuar / Vida Ayrımı:</span> Sabitleyici vida/plaka varsa sistemde Kural 8 uyarınca ayrılarak <em>Sınıf IIb</em> değerlendirilir.
+              </div>
+              <div style="background:rgba(0,0,0,0.2); padding:0.5rem; border-radius:4px;">
+                <span style="color:var(--emerald); font-weight:600;">4. Nihai Karar:</span> Cihaz Ana Gövdesi ➔ <strong>MDR Sınıf III (Tam Uygunluk Değerlendirmesi Annex IX/X)</strong>
+              </div>
+            </div>
+          </div>
+
+          <!-- MDCG 2019-14 Kod Tahsis Kuralları İzi -->
+          <div style="background:rgba(16,185,129,0.06); border:1px dashed var(--emerald); border-radius:6px; padding:0.85rem; font-size:0.83rem;">
+            <div style="display:flex; align-items:center; gap:0.5rem; font-weight:700; color:var(--emerald); margin-bottom:0.4rem;">
+              <span>🏷️ MDCG 2019-14 Kod Tahsis Kuralları İzi (AB 2017/2185 Kapsam Eşleme):</span>
+            </div>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:0.6rem; color:var(--text-main);">
+              <div style="background:rgba(0,0,0,0.2); padding:0.5rem; border-radius:4px;">
+                <span style="color:var(--cyan); font-weight:600;">MDA/MDN Kuralı (Tam 1 Adet):</span> Tasarım ve kullanım amacı ➔ <strong>MDN 1102</strong> (Ortopedik İmplant)
+              </div>
+              <div style="background:rgba(0,0,0,0.2); padding:0.5rem; border-radius:4px;">
+                <span style="color:var(--cyan); font-weight:600;">MDS Kuralı (0 veya Birden Fazla):</span> Özel sterilite niteliği ➔ <strong>MDS 1005</strong> (Steril Ürün)
+              </div>
+              <div style="background:rgba(0,0,0,0.2); padding:0.5rem; border-radius:4px;">
+                <span style="color:var(--cyan); font-weight:600;">MDT Kuralı (En Az 1 Adet):</span> Üretim prosesleri ➔ <strong>MDT 2001</strong> (Metal), <strong>MDT 2008</strong> (Gama), <strong>MDT 2011</strong> (Temiz Oda)
+              </div>
+              <div style="background:rgba(0,0,0,0.2); padding:0.5rem; border-radius:4px;">
+                <span style="color:var(--cyan); font-weight:600;">Heyet Rol Eşleşmesi:</span> PR ➔ MDN 1102+MDS 1005; SA ➔ MDT kodları; KU ➔ Ortopedi cerrahı; DM/FR ➔ Bağımsız
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 2: Competence Matrix Allocation -->
+      <div style="background:var(--bg-input); border:1px solid var(--border); border-radius:8px; padding:1.2rem; margin-bottom:1.5rem;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem; flex-wrap:wrap; gap:0.5rem;">
+          <div style="font-weight:700; color:#fff; font-size:1.05rem;">
+            2. Excel Yetkinlik Matrisine Göre Heyet Atamaları (PR / SA / KU / FR / DM)
+          </div>
+          <div style="display:flex; align-items:center; gap:0.5rem;">
+            <a href="denetci_yetkinlik_matrisi_ve_teklif.xlsx" download class="btn btn-emerald" style="padding:0.35rem 0.75rem; font-size:0.8rem; text-decoration:none;">
+              📥 Excel Matrisini İndir (.xlsx)
+            </a>
+            <span style="font-size:0.75rem; color:var(--emerald); background:rgba(16,185,129,0.1); padding:0.35rem 0.6rem; border-radius:4px;">
+              ✓ Sadece MDN 1102 (Ortopedik İmplant) + MDS 1005 Yetkili Denetçiler Listelendi
+            </span>
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap:1rem;">
+          <!-- PR -->
+          <div>
+            <label style="font-size:0.8rem; color:var(--text-muted); font-weight:700;">PR: Product Reviewer (Teknik İncelemeci):</label>
+            <select id="rolePR" onchange="checkIndependence()" style="width:100%; background:var(--bg-card); border:1px solid var(--border); color:#fff; padding:0.55rem; border-radius:6px; margin-top:0.25rem;">
+              <option value="AUD-01">Dr. Selin B. (Ortopedi Cerrahı & Biyomateryal - PR/KU)</option>
+              <option value="AUD-02">Müh. Caner T. (Biyomedikal Baş Denetçi - PR/SA)</option>
+            </select>
+          </div>
+
+          <!-- SA -->
+          <div>
+            <label style="font-size:0.8rem; color:var(--text-muted); font-weight:700;">SA: Site Auditor (Saha Baş Denetçisi):</label>
+            <select id="roleSA" onchange="checkIndependence()" style="width:100%; background:var(--bg-card); border:1px solid var(--border); color:#fff; padding:0.55rem; border-radius:6px; margin-top:0.25rem;">
+              <option value="AUD-04">Dr. Zeynep A. (ISO 13485 Baş Denetçisi - SA)</option>
+              <option value="AUD-02">Müh. Caner T. (Biyomedikal Baş Denetçi - SA/PR)</option>
+            </select>
+          </div>
+
+          <!-- KU -->
+          <div>
+            <label style="font-size:0.8rem; color:var(--text-muted); font-weight:700;">KU: Klinik Uzman (Clinical Reviewer):</label>
+            <select id="roleKU" style="width:100%; background:var(--bg-card); border:1px solid var(--border); color:#fff; padding:0.55rem; border-radius:6px; margin-top:0.25rem;">
+              <option value="AUD-01">Dr. Selin B. (Ortopedi Cerrahı & Biyomateryal - KU)</option>
+            </select>
+          </div>
+
+          <!-- FR -->
+          <div>
+            <label style="font-size:0.8rem; color:var(--text-muted); font-weight:700;">FR: Final Reviewer (Bağımsız İncelemeci):</label>
+            <select id="roleFR" onchange="checkIndependence()" style="width:100%; background:var(--bg-card); border:1px solid var(--border); color:#fff; padding:0.55rem; border-radius:6px; margin-top:0.25rem;">
+              <option value="AUD-07">Ahmet V. (Kıdemli Karar Verici - FR/DM Bağımsız)</option>
+              <option value="AUD-08">Elif S. (Komite Başkanı - FR/DM Bağımsız)</option>
+            </select>
+          </div>
+
+          <!-- DM -->
+          <div>
+            <label style="font-size:0.8rem; color:var(--text-muted); font-weight:700;">DM: Decision Maker (Karar Verici Heyet):</label>
+            <select id="roleDM" onchange="checkIndependence()" style="width:100%; background:var(--bg-card); border:1px solid var(--border); color:#fff; padding:0.55rem; border-radius:6px; margin-top:0.25rem;">
+              <option value="AUD-08">Elif S. (Komite Başkanı - DM/FR Bağımsız)</option>
+              <option value="AUD-07">Ahmet V. (Kıdemli Karar Verici - DM/FR Bağımsız)</option>
+            </select>
+          </div>
+        </div>
+
+        <div id="independenceAlert" style="display:none; margin-top:1rem; padding:0.75rem 1rem; border-radius:6px; background:rgba(244,63,94,0.15); border-left:4px solid var(--rose); color:#fff; font-size:0.88rem;">
+          <strong>⚠️ MDR Annex VII 4.10 Bağımsızlık İhlali:</strong> Aynı denetçi hem inceleme heyetinde (PR/SA/KU) hem de Karar Verici heyette (DM/FR) bulunamaz! Lütfen atamayı düzeltiniz.
+        </div>
+      </div>
+
+      <!-- Card 3: Internal Quote & Audit Time Calculator -->
+      <div style="background:var(--bg-input); border:1px solid var(--border); border-radius:8px; padding:1.2rem;">
+        <div style="font-weight:700; color:#fff; margin-bottom:0.75rem; font-size:1.05rem;">
+          3. İç Kaynaklı Teklif Formuna Göre Denetim Süreleri ve Teklif Hesaplama
+        </div>
+
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:1rem; margin-bottom:1rem;">
+          <div>
+            <label style="font-size:0.8rem; color:var(--text-muted); font-weight:600;">Çalışan Sayısı:</label>
+            <input type="number" id="empCount" value="120" style="width:100%; background:var(--bg-card); border:1px solid var(--border); color:#fff; padding:0.5rem; border-radius:6px; margin-top:0.25rem;">
+          </div>
+          <div>
+            <label style="font-size:0.8rem; color:var(--text-muted); font-weight:600;">Tesis / Fabrika Sayısı:</label>
+            <input type="number" id="siteCount" value="1" style="width:100%; background:var(--bg-card); border:1px solid var(--border); color:#fff; padding:0.5rem; border-radius:6px; margin-top:0.25rem;">
+          </div>
+          <div>
+            <label style="font-size:0.8rem; color:var(--text-muted); font-weight:600;">Belgelendirme Tipi:</label>
+            <select id="auditScope" style="width:100%; background:var(--bg-card); border:1px solid var(--border); color:#fff; padding:0.55rem; border-radius:6px; margin-top:0.25rem;">
+              <option value="initial">İlk Belgelendirme (MDR Annex IX Bölüm I & II)</option>
+              <option value="surveillance">Gözetim Denetimi</option>
+              <option value="recert">Yeniden Belgelendirme</option>
+            </select>
+          </div>
+        </div>
+
+        <button class="btn btn-emerald" onclick="calculateOfferAndTimes()" style="width:100%; justify-content:center;">
+          📊 Teklif Formuna Göre Süreleri ve Heyet Dağılımını Hesapla
+        </button>
+
+        <div id="quoteTableBox" style="display:none; margin-top:1.5rem;">
+          <table style="width:100%; border-collapse:collapse; font-size:0.9rem; text-align:left;">
+            <thead>
+              <tr style="border-bottom:1px solid var(--border); color:var(--cyan);">
+                <th style="padding:0.75rem 0.5rem;">Denetim / İnceleme Faaliyeti</th>
+                <th style="padding:0.75rem 0.5rem;">Atanan Uzman Rolü</th>
+                <th style="padding:0.75rem 0.5rem;">Hesaplanan Süre</th>
+                <th style="padding:0.75rem 0.5rem;">Yasal Referans</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="border-bottom:1px solid rgba(255,255,255,0.05);">
+                <td style="padding:0.6rem 0.5rem; color:#fff;">KYS Aşama 1 Dokümantasyon Denetimi</td>
+                <td style="padding:0.6rem 0.5rem; color:var(--text-muted);">Saha Baş Denetçisi (SA)</td>
+                <td style="padding:0.6rem 0.5rem; color:var(--emerald); font-weight:700;">2.0 Adam/Gün</td>
+                <td style="padding:0.6rem 0.5rem; color:var(--text-muted);">IAF MD 9 & MDR Annex IX</td>
+              </tr>
+              <tr style="border-bottom:1px solid rgba(255,255,255,0.05);">
+                <td style="padding:0.6rem 0.5rem; color:#fff;">KYS Aşama 2 Saha & Temiz Oda Denetimi</td>
+                <td style="padding:0.6rem 0.5rem; color:var(--text-muted);">Saha Baş Denetçisi (SA)</td>
+                <td style="padding:0.6rem 0.5rem; color:var(--emerald); font-weight:700;">5.0 Adam/Gün</td>
+                <td style="padding:0.6rem 0.5rem; color:var(--text-muted);">IAF MD 9 Sınıf III Çizelgesi</td>
+              </tr>
+              <tr style="border-bottom:1px solid rgba(255,255,255,0.05);">
+                <td style="padding:0.6rem 0.5rem; color:#fff;">MDR Teknik Dosya & GSPR İncelemesi</td>
+                <td style="padding:0.6rem 0.5rem; color:var(--text-muted);">Product Reviewer (PR)</td>
+                <td style="padding:0.6rem 0.5rem; color:var(--cyan); font-weight:700;">32.0 Adam/Saat</td>
+                <td style="padding:0.6rem 0.5rem; color:var(--text-muted);">MDR Annex II/III (MDN 1102)</td>
+              </tr>
+              <tr style="border-bottom:1px solid rgba(255,255,255,0.05);">
+                <td style="padding:0.6rem 0.5rem; color:#fff;">Klinik Değerlendirme & PMCF İncelemesi</td>
+                <td style="padding:0.6rem 0.5rem; color:var(--text-muted);">Klinik Uzman (KU)</td>
+                <td style="padding:0.6rem 0.5rem; color:var(--cyan); font-weight:700;">20.0 Adam/Saat</td>
+                <td style="padding:0.6rem 0.5rem; color:var(--text-muted);">MDR Annex XIV (Sınıf III İmplant)</td>
+              </tr>
+              <tr style="border-bottom:1px solid rgba(255,255,255,0.05);">
+                <td style="padding:0.6rem 0.5rem; color:#fff;">Mikrobiyoloji & Sterilizasyon Doğrulaması</td>
+                <td style="padding:0.6rem 0.5rem; color:var(--text-muted);">Sterilizasyon Uzmanı (PR)</td>
+                <td style="padding:0.6rem 0.5rem; color:var(--cyan); font-weight:700;">8.0 Adam/Saat</td>
+                <td style="padding:0.6rem 0.5rem; color:var(--text-muted);">MDS 1005 (Gama Işınlama)</td>
+              </tr>
+              <tr style="border-bottom:1px solid var(--border);">
+                <td style="padding:0.6rem 0.5rem; color:#fff;">Nihai İnceleme & Komite Karar Oturumu</td>
+                <td style="padding:0.6rem 0.5rem; color:var(--text-muted);">Final Reviewer & DM Heyeti</td>
+                <td style="padding:0.6rem 0.5rem; color:var(--purple); font-weight:700;">6.0 Adam/Saat</td>
+                <td style="padding:0.6rem 0.5rem; color:var(--text-muted);">MDR Annex VII 4.10</td>
+              </tr>
+            </tbody>
+            <tfoot>
+              <tr style="font-weight:700; background:rgba(0,0,0,0.25);">
+                <td style="padding:0.75rem 0.5rem; color:#fff;">TOPLAM DENETİM EFORU:</td>
+                <td style="padding:0.75rem 0.5rem; color:var(--text-muted);">Tüm Heyet</td>
+                <td style="padding:0.75rem 0.5rem; color:#fff;">7.0 Adam/Gün (Saha) + 66.0 Saat (Dosya)</td>
+                <td style="padding:0.75rem 0.5rem; color:var(--emerald);">Onaylanmış Kuruluş Teklifine Hazır</td>
+              </tr>
+            </tfoot>
+          </table>
+
+          <div style="margin-top:1rem; text-align:right;">
+            <button class="btn btn-emerald" onclick="alert('Teklif formu ve Denetim Heyeti Görevlendirme Kararı sisteme kaydedildi ve resmi şablona aktarıldı!')">
+              📝 Resmi Teklif Formu ve Heyet Atamasını Kaydet
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script>
+function openStep(num) {
+  document.querySelectorAll('.step-item').forEach((el, idx) => {
+    el.classList.toggle('active', idx === num - 1);
+  });
+  document.querySelectorAll('.tab-pane').forEach((el, idx) => {
+    el.classList.toggle('active', idx === num - 1);
+  });
+}
+
+function extractCodesAndClass() {
+  document.getElementById('codingResultBox').style.display = 'block';
+}
+
+function checkIndependence() {
+  const pr = document.getElementById('rolePR').value;
+  const sa = document.getElementById('roleSA').value;
+  const fr = document.getElementById('roleFR').value;
+  const dm = document.getElementById('roleDM').value;
+
+  const auditors = [pr, sa];
+  const decisionMakers = [fr, dm];
+
+  // Conflict check: PR/SA cannot be FR/DM
+  const conflict = auditors.some(a => decisionMakers.includes(a));
+  const alertBox = document.getElementById('independenceAlert');
+  if (conflict) {
+    alertBox.style.display = 'block';
+  } else {
+    alertBox.style.display = 'none';
+  }
+}
+
+function calculateOfferAndTimes() {
+  document.getElementById('quoteTableBox').style.display = 'block';
+}
+
+function runPreDispatchQA() {
+  // Finding 1: Approved
+  document.getElementById('status1').className = 'status-pill status-approved';
+  document.getElementById('status1').innerText = 'ONAYLANDI (YASAL VE KANITLI)';
+  document.getElementById('analysis1').className = 'analysis-box show analysis-approved';
+  document.getElementById('analysis1').innerHTML = `
+    <strong>✓ Yasal Dayanak Teyit Edildi:</strong> MDR Annex I GSPR 10.1 & ISO 10993-12.<br>
+    <strong>✓ Delil Kontrolü:</strong> Teknik dosyada ilgili testin bulunmadığı sistemce de doğrulandı.<br>
+    <strong>✓ Derecelendirme:</strong> Majör Uygunsuzluk sınıflandırması NB SOP'lerine uygun.
+  `;
+
+  // Finding 2: Rejected
+  document.getElementById('status2').className = 'status-pill status-rejected';
+  document.getElementById('status2').innerText = 'REDDEDİLDİ (SÜBJEKTİF BULGU)';
+  document.getElementById('analysis2').className = 'analysis-box show analysis-rejected';
+  document.getElementById('analysis2').innerHTML = `
+    <strong>⚠️ Hukuki Dayanak Bulunamadı:</strong> MDR'da veya standartlarda ambalajın rengine ilişkin bir kural yoktur.<br>
+    <strong>⚠️ Sübjektif Değerlendirme:</strong> Denetçinin kişisel tercihi olduğu tespit edildi.<br>
+    <strong>Eylem:</strong> Bu bulgu resmi eksiklik raporundan otomatik olarak çıkarıldı; firmaya gönderilmeyecektir.
+  `;
+
+  // Finding 3: Approved with enrichment
+  document.getElementById('status3').className = 'status-pill status-approved';
+  document.getElementById('status3').innerText = 'ONAYLANDI (ZENGİNLEŞTİRİLDİ)';
+  document.getElementById('analysis3').className = 'analysis-box show analysis-approved';
+  document.getElementById('analysis3').innerHTML = `
+    <strong>✓ Yasal Dayanak:</strong> MDR Annex XIV Bölüm B (PMCF) & MDCG 2020-7.<br>
+    <strong>✓ Sistem Zenginleştirmesi:</strong> Denetçi raporuna ilgili IMDRF Registry kılavuz referansı ve kohort büyüklüğü standardı otomatik eklendi.
+  `;
+
+  document.getElementById('dispatchBox').style.display = 'block';
+}
+
+function verifyCAPA() {
+  document.getElementById('capaStatus1').className = 'status-pill status-approved';
+  document.getElementById('capaStatus1').innerText = 'KAPATILDI';
+  document.getElementById('capaAnalysis1').className = 'analysis-box show analysis-approved';
+  document.getElementById('capaAnalysis1').innerHTML = `
+    <strong>✓ Kanıt Geçerli:</strong> LAB-2026-BIO-8871 raporunun ISO 17025 akredite kurumdan geldiği doğrulandı. Ekstraksiyon süre ve sıcaklık parametreleri ISO 10993-12 ve ISO 10993-5 ile uyumlu.
+  `;
+
+  document.getElementById('capaStatus2').className = 'status-pill status-approved';
+  document.getElementById('capaStatus2').innerText = 'KAPATILDI';
+  document.getElementById('capaAnalysis2').className = 'analysis-box show analysis-approved';
+  document.getElementById('capaAnalysis2').innerHTML = `
+    <strong>✓ Kanıt Geçerli:</strong> AOANJRR ve UK NJR uluslararası eklem kayıt kütüğü kıyaslama protokolü ve 10 yıllık kohort planı MDCG 2020-7 ile uyumlu bulundu.
+  `;
+
+  document.getElementById('committeeDispatchBox').style.display = 'block';
+}
+
+function signDecision() {
+  document.getElementById('signResult').style.display = 'block';
+}
+</script>
+</body>
+</html>

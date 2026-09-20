@@ -1,0 +1,9 @@
+﻿Denetçi ID;Ad Soyad;Unvan / Uzmanlık;Yetkili Roller;Yetkili MDA Kodları;Yetkili MDN Kodları;Yetkili MDS/MDT Kodları;Bağımsızlık Durumu
+AUD-01;Dr. Selin B.;Ortopedi Cerrahı & Biyomateryal;KU, PR;-;MDN 1102, MDN 1104;MDS 1005, MDT 2007;Denetçi (DM/FR Olamaz)
+AUD-02;Müh. Caner T.;Biyomedikal Baş Denetçi;SA, PR;MDA 0201;MDN 1102;MDS 1005, MDT 2007, MDT 2008;Denetçi (DM/FR Olamaz)
+AUD-03;Prof. Dr. Murat K.;Kardiyolog & Kalp Cerrahı;KU, PR;MDA 0201, MDA 0305;MDN 1101;MDS 1005, MDS 1004;Denetçi (DM/FR Olamaz)
+AUD-04;Dr. Zeynep A.;KYS Baş Denetçisi (Lead Auditor);SA;-;MDN 1102, MDN 1301;MDT 2008, MDT 2010;Denetçi (DM/FR Olamaz)
+AUD-05;Dr. Burak D.;Yazılım / SaMD Uzmanı;PR, KU;MDA 0202, MDA 0203;-;MDS 1005;Denetçi (DM/FR Olamaz)
+AUD-06;Uzm. Leyla H.;Mikrobiyoloji & Sterilizasyon Uzm.;PR;-;MDN 1102, MDN 1104;MDS 1005, MDT 2009;Denetçi (DM/FR Olamaz)
+AUD-07;Ahmet V.;Kıdemli Karar Verici (MDR Annex VII);DM, FR;Tüm MDA;Tüm MDN (MDN 1102 dahil);Tüm MDS/MDT;TAM BAĞIMSIZ (PR/SA Görevi Yok)
+AUD-08;Elif S.;Sertifikasyon Komite Başkanı;DM, FR;Tüm MDA;Tüm MDN (MDN 1102 dahil);Tüm MDS/MDT;TAM BAĞIMSIZ (PR/SA Görevi Yok)
